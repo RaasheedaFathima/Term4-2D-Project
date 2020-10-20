@@ -29,23 +29,23 @@ public class SATSolverTest {
         return a2SATproblem;
     }
 
-    public void solvingwithDPLL(Formula f) {
-        System.out.println("Solve with DPLL method");
+    public void startSATSolver(Formula f) {
+        System.out.println("SAT solver starts!!!");
         long startTime = System.nanoTime();
-        Environment env = SATSolver.solve(f);
+        Environment e = SATSolver.solve(f);
         long endTime = System.nanoTime();
         long durationTime = endTime - startTime;
-        System.out.println("Time taken:" + durationTime / 1_000_000.0 + "ms");
-        if (env == null) {
-            System.out.println("Unsatisfiable");
-        } else
-            System.out.println("Satisfiable");
-            System.out.println(env);
+        System.out.println("Time:" + durationTime / 1_000_000.0 + "ms");
+        if (e == null) {
+            System.out.println("not satisfiable");
+        } else{
+            System.out.println("not satisfiable");
+            System.out.println(e);}
     }
 
 
     // TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
-    public static Formula readFile(String filename) throws IOException {
+    public static Formula readFile(String filename) throws IOException { //very important method to read the file
         Scanner scans = null; //creates scanner object with initial value null
         boolean existsProblem = false; //boolean variable to indicate whether there is a problem to solve or not
         Clause[] listofclauses = null; //to store an array of clauses
@@ -158,7 +158,7 @@ public class SATSolverTest {
             SATSolverTest testings = new SATSolverTest();
             Formula formulatest = readFile(filename);
             if (isa2SATproblem()) {
-                testings.testDPLL(formulatest);
+                testings.startSATSolver(formulatest);
             } else if(isa2SATproblem()==false) {
                 System.out.println("More than 2 literals");
                 System.exit(1);
@@ -172,25 +172,3 @@ public class SATSolverTest {
 
     }
 }
-
-//how to use scanner/this is just for note
-/*public static void main(String args[]) throws FileNotFoundException {
-
-    //creating File instance to reference text file in Java
-    File text = new File("C:/temp/test.txt");
-
-    //Creating Scanner instnace to read File in Java
-    Scanner scnr = new Scanner(text);
-
-    //Reading each line of file using Scanner class
-    int lineNumber = 1;
-    while(scnr.hasNextLine()){
-        String line = scnr.nextLine();
-        System.out.println("line " + lineNumber + " :" + line);
-        lineNumber++;
-    }
-
-}
-
-}
-*/
