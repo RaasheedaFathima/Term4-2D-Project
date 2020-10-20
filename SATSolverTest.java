@@ -74,7 +74,7 @@ public class SATSolverTest {
                 while (scans.hasNext()) {
                     String nextstring = scans.next();
                     String[] listofvalues = nextstring.trim().split(" ");
-                    if (listofvalues.length > 2) {
+                    if (listofvalues.length > 2) { //if the clause has more than 2 "values" or in this case literals,
                         a2SATproblem = false;
                         throw new IOException("More than 2 literals in one clause.");
                     }
