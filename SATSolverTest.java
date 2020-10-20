@@ -29,17 +29,18 @@ public class SATSolverTest {
         return a2SATproblem;
     }
 
-    public void testDPLL(Formula f) {
-        System.out.println("Solving with DPLL..");
-        long started = System.nanoTime();
-        Environment e = SATSolver.solve(f);
-        long time = System.nanoTime();
-        long timeTaken = time - started;
-        System.out.println("Time:" + timeTaken / 1_000_000.0 + "ms");
-        if (e == null) {
-            System.out.println("UNSATISFIABLE.");
+    public void solvingwithDPLL(Formula f) {
+        System.out.println("Solve with DPLL method");
+        long startTime = System.nanoTime();
+        Environment env = SATSolver.solve(f);
+        long endTime = System.nanoTime();
+        long durationTime = endTime - startTime;
+        System.out.println("Time taken:" + durationTime / 1_000_000.0 + "ms");
+        if (env == null) {
+            System.out.println("Unsatisfiable");
         } else
-            System.out.println(e);
+            System.out.println("Satisfiable");
+            System.out.println(env);
     }
 
 
