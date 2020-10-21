@@ -1,0 +1,120 @@
+.include "/referencefiles/nominal.jsim"
+.include "/referencefiles/stdcell.jsim" 
+.include "/referencefiles/2dcheckoff_100ns.jsim"
+
+*g(i) and p(i)
+.subckt GP a b g p
+Xxor2p a b p xor2
+Xnand2ginv a b ginv nand2
+Xinvg ginv g inverter
+.ends
+
+*g(i,j) and p(i,j)
+.subckt GijPij gi1 pi1 gi2 pi2 go po
+Xnand2poinv pi1 pi2 poinv nand2
+Xinv2po poinv po inverter
+Xnand2pg gi1 pi2 pg nand2
+Xinvgi2inv gi2 gi2inv inverter
+Xnand4gopg pg gi2inv go nand2
+.ends
+
+*carry
+.subckt carry ci p g co
+Xnandcp ci p cp nand2
+Xinvginv g ginv inverter
+Xnandco cp ginv co nand2
+.ends
+
+*16 bit CLAA
+.subckt adder16 a[15:0] b[15:0] c0 s[15:0] co
+Xgetgp a[15:0] b[15:0] g[15:0] p[15:0] GP
+
+*To find all the carries
+
+*find g(i,j) and p(i,j) for all
+Xgijpij0 g0 p0 g1 p1 g0a1 p0a1 GijPij
+Xgijpij1 g2 p2 g3 p3 g2a3 p2a3 GijPij
+Xgijpij2 g4 p4 g5 p5 g4a5 p4a5 GijPij
+Xgijpij3 g6 p6 g7 p7 g6a7 p6a7 GijPij
+Xgijpij4 g8 p8 g9 p9 g8a9 p8a9 GijPij
+Xgijpij5 g10 p10 g11 p11 g10a11 p10a11 GijPij
+Xgijpij6 g12 p12 g13 p13 g12a13 p12a13 GijPij
+Xgijpij7 g14 p14 g15 p15 g14a15 p14a15 GijPij
+
+*use the gp found above to get second layer
+Xgijpij20 g0a1 p0a1 g2a3 p2a3 g0a3 p0a3 GijPij
+Xgijpij21 g4a5 p4a5 g6a7 p6a7 g4a7 p4a7 GijPij
+Xgijpij22 g8a9 p8a9 g10a11 p10a11 g8a11 p8a11 GijPij
+Xgijpij23 g12a13 p12a13 g14a15 p14a15 g12a15 p12a15 GijPij
+
+*final layer
+Xgijpij30 g0a3 p0a3 g4a7 p4a7 g0a7 p0a7 GijPij
+Xgijpij31 g8a11 p8a11 g12a15 p12a15 g8a15 p8a15 GijPij
+
+*Use all the g and p to calculate the carries at each point
+Xcarry2 c0 p0a1 g0a1 c2 carry
+Xcarry4 c0 p0a3 g0a3 c4 carry
+Xcarry8 c0 p0a7 g0a7 c8 carry
+
+Xcarry6 c4 p4a5 g4a5 c6 carry
+Xcarry10 c8 p8a9 g8a9 c10 carry
+Xcarry12 c8 p8a11 g8a11 c12 carry
+Xcarry14 c12 p12a13 g12a13 c14 carry
+
+Xcarry1 c0 p0 g0 c1 carry
+Xcarry3 c2 p2 g2 c3 carry
+Xcarry5 c4 p4 g4 c5 carry
+Xcarry7 c6 p6 g6 c7 carry
+Xcarry9 c8 p8 g8 c9 carry
+Xcarry11 c10 p10 g10 c11 carry
+Xcarry13 c12 p12 g12 c13 carry
+Xcarry15 c14 p14 g14 c15 carry
+
+Xcarryout c8 p8a15 g8a15 co carry
+
+Xgetthesum c[15:0] p[15:0] s[15:0] xor2
+.ends
+
+*32bit adder using 2 16bit adders
+.subckt adder32 op0 A[31:0] B[31:0] S[31:0] z v n
+XinvB B[31:0] op0#32 XB[31:0] xor2
+
+Xlet1be1 1 constant1
+
+Xfulladder1 A[15:0] XB[15:0] op0 S[15:0] c16 adder16
+
+*carry select to run simultaneously
+Xfulladder2add A[31:16] XB[31:16] 0 Sa[31:16] c32a adder16
+Xfulladder2sub A[31:16] XB[31:16] 1 Sb[31:16] c32b adder16
+*just add a mux to select output
+Xmuxbasedonop0 c16#16 Sa[31:16] Sb[31:16] S[31:16] mux2
+
+*Z is true when all outputs = 0
+Xz S[31:0] z NOR32
+
+*V is true when overflow (follow lab3 handout, page6)
+XinvA A31 A31inv inverter
+XinvertB XB31 XB31inv inverter
+XinvS S31 S31inv inverter
+Xnand3v1inv A31 XB31 S31inv v1inv nand3
+Xinvv1 v1inv v1 inverter
+Xnand3v2inv A31inv XB31inv S31 v2inv nand3
+Xinvv2 v2inv v2 inverter
+Xnorvinv v1 v2 vinv nor2
+Xinvv vinv v inverter
+
+*N is true when S is negative (s31 = 1)
+*Thus, just connect N to S31
+.connect s31 n
+.ends
+
+
+*32 input NOR gate
+.subckt NOR32 s[31:0] z
+* NOR4 into 8 outputs, NAND4 into 2 outputs then NOR2 into Z (32bit NOR gate)
+Xnor4 s[0:7] s[8:15] s[16:23] s[24:31] x[1:8] nor4
+* Now second layer of NAND4 
+Xnand4 x[1:2] x[3:4] x[5:6] x[7:8] c[1:2] nand4
+*final NOR2
+Xnor2 c1 c2 z nor2
+.ends
