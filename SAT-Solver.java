@@ -57,11 +57,9 @@ public class SATSolver {
 
         Literal Random_L = smallest.chooseLiteral();
         Variable V_RandomL = Random_L.getVariable();
-        //System.out.println(V_RandomL.toString());
         if (smallest.isUnit()){
             if (Random_L.equals(PosLiteral.make(V_RandomL)))env = env.putTrue(V_RandomL);
             else env = env.putFalse(V_RandomL);
-            //System.out.println(smallest.toString());
             return solve(substitute(clauses,Random_L),env);
         }
         else {
@@ -75,8 +73,6 @@ public class SATSolver {
         }catch(RuntimeException eksepsi){
             return null;
     }
-
-        //throw new RuntimeException("not yet implemented.");
     }
 
     /**
