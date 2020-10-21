@@ -21,21 +21,19 @@ public class SATSolver {
      * unit propagation. The returned environment binds literals of class
      * bool.Variable rather than the special literals used in clausification of
      * class clausal.Literal, so that clients can more readily use it.
-     * 
+     *
      * @return an environment for which the problem evaluates to Bool.TRUE, or
      *         null if no such environment exists.
      */
-    public static Environment solve(Formula formula) {
-        // TODO: implement this.
+    public static Environment solve(Formula formula) throws RuntimeException{
         Environment answer = new Environment();
         return solve(formula.getClauses(),answer);
-        throw new RuntimeException("not yet implemented.");
     }
 
     /**
      * Takes a partial assignment of variables to values, and recursively
      * searches for a complete satisfying assignment.
-     * 
+     *
      * @param clauses
      *            formula in conjunctive normal form
      * @param env
@@ -45,15 +43,15 @@ public class SATSolver {
      *         or null if no such environment exists.
      */
     private static Environment solve(ImList<Clause> clauses, Environment env) {
-        // TODO: implement this.
-        if(clauses.isEmpty()) return env;
+        try{if(clauses.isEmpty()) {
+            return env;
+        }
         Clause smallest = null;
-        for (Clause A:clauses){
+        for (Clause A:clauses) {
             if (A.isEmpty()) {
-                System.out.println("works");
                 return null;
             }
-            if (smallest==null||smallest.size()>A.size())smallest = A;
+            if (smallest == null || smallest.size() > A.size()) smallest = A;
             if (smallest.isUnit()) break;
         }
 
@@ -72,25 +70,26 @@ public class SATSolver {
             //System.out.println(smallest.toString());
             if (envtrue == null) return solve(substitute(clauses,Random_L.getNegation()),env.putFalse(V_RandomL));
             return envtrue;
-        }
+        }}catch(NullPointerException eksepsi){
+            return null;
+        }catch(RuntimeException eksepsi){
+            return null;
+    }
 
-
-        throw new RuntimeException("not yet implemented.");
+        //throw new RuntimeException("not yet implemented.");
     }
 
     /**
      * given a clause list and literal, produce a new list resulting from
      * setting that literal to true
-     * 
+     *
      * @param clauses
      *            , a list of clauses
      * @param l
      *            , a literal to set to true
      * @return a new list of clauses resulting from setting l to true
      */
-    private static ImList<Clause> substitute(ImList<Clause> clauses,
-            Literal l) {
-        // TODO: implement this.
+    private static ImList<Clause> substitute(ImList<Clause> clauses, Literal l) throws RuntimeException{
         Iterator<Clause> Citer = clauses.iterator();
         ImList<Clause> new_clauses = new EmptyImList<Clause>();
         Clause tmp_clause;
@@ -101,7 +100,6 @@ public class SATSolver {
                 new_clauses = new_clauses.add(tmp_clause);
         }
         return new_clauses;
-        throw new RuntimeException("not yet implemented.");
     }
 
 }
