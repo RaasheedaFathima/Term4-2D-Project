@@ -24,12 +24,6 @@ public class SATSolverTest {
     Literal na = a.getNegation();
     Literal nb = b.getNegation();
     Literal nc = c.getNegation();
-    public static boolean a2SATproblem = true;
-
-    public static boolean isa2SATproblem() {
-        return a2SATproblem;
-    }
-
     public static String numberVariables;
 
     public void startSATSolver(Formula f) throws IOException {
@@ -43,7 +37,6 @@ public class SATSolverTest {
             System.out.println("not satisfiable");
         } else{
             System.out.println("satisfiable");
-            System.out.println(numberVariables);
             writeFile(e);
         }
     }
@@ -57,15 +50,14 @@ public class SATSolverTest {
         writer.close();
     }
 
-
-    public static Formula readFile(String filename) throws IOException { //very important method to read the file
+    public static Formula readFile(String filename) { //method to read the file
         Scanner scans = null; //creates scanner object with initial value null
         boolean existsProblem = false; //boolean variable to indicate whether there is a problem to solve or not
-        Clause[] listofclauses = null; //to store an array of clauses
-        int pointerClause = 0;
+        Clause[] listofclauses = null; //stores an array of clauses
+        int pointerClause = 0; //pointer for a clause
         try {
-            scans = new Scanner(new File(filename)); //have to handle file not found exception
-            String inputstring = null;
+            scans = new Scanner(new File(filename));
+            String inputstring;
             while (scans.hasNextLine()) { //while the scanner object is still able to scan the next line
                 inputstring = scans.nextLine(); //create a string from the nextLine scanned by the scanner
                 if (inputstring.isEmpty() || inputstring.charAt(0) == 'c') { //if the line is empty or the line is a comment line then skip it
@@ -77,20 +69,16 @@ public class SATSolverTest {
                     numberVariables = listofstring[2];
                     listofclauses = new Clause[indextoplace];
                     pointerClause = indextoplace - 1;
-                    existsProblem = true; //then there exists a problem
+                    existsProblem = true;
                     break;
                 }
             }
-            if (existsProblem == true) { //if there exists a problem
+            if (existsProblem == true) { //condtion if there exists a problem
                 scans.useDelimiter(" 0");
-                while (scans.hasNext()) { //while the scanner still can scan the next string
+                while (scans.hasNext()) {
                     String nextstring;
                     nextstring = scans.next();
                     String[] listofvalues = nextstring.trim().split(" ");
-                    if (listofvalues.length > 2) { //if the clause has more than 2 "values" or in this case literals,
-                        a2SATproblem = false;
-                        //throw new IOException("More than 2 literals in one clause.");
-                    }
                     Literal[] listofliterals = new Literal[listofvalues.length];
                     for (int k = 0; k < listofliterals.length; k++) {
                         String listofstring = listofvalues[k].trim();
@@ -98,16 +86,15 @@ public class SATSolverTest {
                             listofliterals[k] = listofstring.charAt(0) == '-' ? NegLiteral.make(listofstring.substring(1)) : PosLiteral.make(listofstring);
                         }
                     }
-
                     if (listofliterals[0] != null) { //if the first element of the list of literals is not null
-                        listofclauses[pointerClause] = makeCl(listofliterals); //make a new entry in the listofclauses with index pointerClause
-                        if (listofclauses[pointerClause] == null)
-                            throw new IOException("unsatisfiable");
+                        listofclauses[pointerClause] = makeCl(listofliterals); //make a new entry in the listofclauses with index equal to pointerClause
+                        if (listofclauses[pointerClause] == null) //if the clause at the position marked by pointerClause is null
+                            throw new IOException("not satisfiable");
                     }
                     pointerClause--;
                 }
-            } else {
-                throw new IOException("no problem found");
+            } else { //condition if there exists no problem
+                throw new IOException("no P character or problem found");
             }
         } catch (FileNotFoundException eksepsi) {
             System.out.println("File not found exception");
@@ -123,27 +110,6 @@ public class SATSolverTest {
             scans.close(); //closes the scanner object
         }
         return makeFm(listofclauses);
-    }
-
-
-    public void testSATSolver1() {
-        // (a v b)
-        Environment e = SATSolver.solve(makeFm(makeCl(a, b)));
-/*
-    	assertTrue( "one of the literals should be set to true",
-    			Bool.TRUE == e.get(a.getVariable())  
-    			|| Bool.TRUE == e.get(b.getVariable())	);
-    	
-*/
-    }
-
-
-    public void testSATSolver2() {
-        // (~a)
-        Environment e = SATSolver.solve(makeFm(makeCl(na)));
-/*
-    	assertEquals( Bool.FALSE, e.get(na.getVariable()));
-*/
     }
 
     private static Formula makeFm(Clause... e) {
@@ -164,13 +130,12 @@ public class SATSolverTest {
 
     public static void main(String args[]) throws IOException {
         if (args.length > 0) {
-            String filename = args[0]; //the filename supplied will be the first element of the args array
-            SATSolverTest testings = new SATSolverTest(); //create new instance of the SATSolverTest class
+            String filename = args[0]; //the filename supplied will be the first entry of the args array
+            SATSolverTest testings = new SATSolverTest(); //create new instance of the SATSolverTest
             Formula formulatest = readFile(filename); //creates formula called formulatest by utilizing the readFile method on file specified by filename
-            testings.startSATSolver(formulatest);
+            testings.startSATSolver(formulatest); //runs startSATSolver with formulatest as its argument
         }else{
-            System.out.println("Supply the location of the file");
-            System.exit(0);
+            throw new IOException("Please supply the location of the file");
         }
     }
 }
