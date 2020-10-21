@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
+import java.io.FileWriter;
 
 import sat.env.*;
 import sat.formula.*;
@@ -40,8 +41,16 @@ public class SATSolverTest {
             System.out.println("not satisfiable");
         } else{
             System.out.println("satisfiable");
-            System.out.println(e);}
+            System.out.println(e);
+        }
     }
+
+    /*public static String writeFile(Environment env){
+        FileWriter writer = new FileWriter("BoolAssignment.txt");
+        boolean boolvalue;
+        for( :env){
+            writer.write();
+    }*/
 
 
     public static Formula readFile(String filename) throws IOException { //very important method to read the file
@@ -152,16 +161,10 @@ public class SATSolverTest {
             String filename = args[0]; //the filename supplied will be the first element of the args array
             SATSolverTest testings = new SATSolverTest(); //create new instance of the SATSolverTest class
             Formula formulatest = readFile(filename); //creates formula called formulatest by utilizing the readFile method on file specified by filename
-            if (isa2SATproblem()) { //if the problem is a 2 literal SAT problem
-                testings.startSATSolver(formulatest);
-            } else if(isa2SATproblem()==false) { //if the problem is not a 2 literal SAT problem
-                System.out.println("More than 2 literals");
-                testings.startSATSolver(formulatest);
-            }
-            else{
-                System.out.println("Supply the location of the file");
-                System.exit(0);
-            }
+            testings.startSATSolver(formulatest);
+        }else{
+            System.out.println("Supply the location of the file");
+            System.exit(0);
         }
     }
 }
