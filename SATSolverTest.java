@@ -30,7 +30,9 @@ public class SATSolverTest {
         return a2SATproblem;
     }
 
-    public void startSATSolver(Formula f) {
+    public static String numberVariables;
+
+    public void startSATSolver(Formula f) throws IOException {
         System.out.println("SAT solver starts!!!");
         long startTime = System.nanoTime();
         Environment e = SATSolver.solve(f);
@@ -41,16 +43,19 @@ public class SATSolverTest {
             System.out.println("not satisfiable");
         } else{
             System.out.println("satisfiable");
-            System.out.println(e);
+            System.out.println(numberVariables);
+            writeFile(e);
         }
     }
 
-    /*public static String writeFile(Environment env){
+    public static void writeFile(Environment env) throws IOException{
         FileWriter writer = new FileWriter("BoolAssignment.txt");
-        boolean boolvalue;
-        for( :env){
-            writer.write();
-    }*/
+        for(Integer n = 1; n<=Integer.parseInt(numberVariables); n++){
+            Variable vars = new Variable(n.toString());
+            writer.write(n.toString()+":"+env.get(vars).toString()+"\n");
+        }
+        writer.close();
+    }
 
 
     public static Formula readFile(String filename) throws IOException { //very important method to read the file
@@ -69,6 +74,7 @@ public class SATSolverTest {
                 if (inputstring.charAt(0) == 'p') { //if the first character of the line/string is p means its a problem
                     String[] listofstring = inputstring.split(" "); //convert the line into a list of strings divided based on spaces
                     Integer indextoplace = Integer.parseInt(listofstring[listofstring.length - 1]);
+                    numberVariables = listofstring[2];
                     listofclauses = new Clause[indextoplace];
                     pointerClause = indextoplace - 1;
                     existsProblem = true; //then there exists a problem
