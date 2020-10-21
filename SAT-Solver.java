@@ -65,7 +65,6 @@ public class SATSolver {
         else {
             if (Random_L.equals(NegLiteral.make(V_RandomL))) Random_L = Random_L.getNegation();
             Environment envtrue = solve(substitute(clauses,Random_L),env.putTrue(V_RandomL));
-            //System.out.println(smallest.toString());
             if (envtrue == null) return solve(substitute(clauses,Random_L.getNegation()),env.putFalse(V_RandomL));
             return envtrue;
         }}catch(NullPointerException eksepsi){
