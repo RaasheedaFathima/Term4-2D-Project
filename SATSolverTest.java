@@ -65,16 +65,16 @@ public class SATSolverTest {
                 }
                 if (inputstring.charAt(0) == 'p') { //if the first character of the line/string is p means its a problem
                     String[] listofstring = inputstring.split(" "); //convert the line into a list of strings divided based on spaces
-                    Integer indextoplace = Integer.parseInt(listofstring[listofstring.length - 1]);
+                    Integer numberofclauses = Integer.parseInt(listofstring[listofstring.length - 1]);
                     numberVariables = listofstring[2];
-                    listofclauses = new Clause[indextoplace];
-                    pointerClause = indextoplace - 1;
+                    listofclauses = new Clause[numberofclauses];
+                    pointerClause = numberofclauses - 1; //create a pointer which will be used to insert clauses at indexes in list of clauses
                     existsProblem = true;
                     break;
                 }
             }
             if (existsProblem == true) { //condtion if there exists a problem
-                scans.useDelimiter(" 0");
+                scans.useDelimiter(" 0"); //to distinguish lines based on the last string " 0"
                 while (scans.hasNext()) {
                     String nextstring;
                     nextstring = scans.next();
@@ -83,15 +83,15 @@ public class SATSolverTest {
                     for (int k = 0; k < listofliterals.length; k++) {
                         String listofstring = listofvalues[k].trim();
                         if (listofstring.length() > 0) {
-                            listofliterals[k] = listofstring.charAt(0) == '-' ? NegLiteral.make(listofstring.substring(1)) : PosLiteral.make(listofstring);
+                            listofliterals[k] = (listofstring.charAt(0) == '-') ? NegLiteral.make(listofstring.substring(1)) : PosLiteral.make(listofstring);
                         }
                     }
                     if (listofliterals[0] != null) { //if the first element of the list of literals is not null
-                        listofclauses[pointerClause] = makeCl(listofliterals); //make a new entry in the listofclauses with index equal to pointerClause
+                        listofclauses[pointerClause] = makeCl(listofliterals); //make a new entry in the listofclauses with index pointerClause
                         if (listofclauses[pointerClause] == null) //if the clause at the position marked by pointerClause is null
                             throw new IOException("not satisfiable");
                     }
-                    pointerClause--;
+                    pointerClause--; //move pointer down by 1 index position
                 }
             } else { //condition if there exists no problem
                 throw new IOException("no P character or problem found");
