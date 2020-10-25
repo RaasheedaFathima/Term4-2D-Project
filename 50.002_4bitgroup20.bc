@@ -1,0 +1,45 @@
+BC1.1
+
+BINV_0 := ODD( B0, op0 );
+BINV_1:= ODD( B1, op0 );
+BINV_2 := ODD( B2, op0 );
+BINV_3 := ODD( B3, op0 );
+
+
+P_0 := ODD (A0, BINV_0);
+G_0 := NOT( NOT( AND(A0,BINV_0)));
+
+P_1 := ODD (A1, BINV_1);
+G_1 := NOT( NOT( AND(A1,BINV_1)));
+
+P_2 := ODD (A2, BINV_2);
+G_2 := NOT( NOT( AND(A2,BINV_2)));
+
+P_3 := ODD (A3, BINV_3);
+G_3 := NOT( NOT( AND(A3,BINV_3)));
+
+P0A1 := NOT (NOT(AND(P0, P1)));
+G0A1 := NOT( AND( NOT(NOT(AND( G0, P1)))));
+
+P2A3 := NOT (NOT(AND(P2, P3)));
+G2A3 := NOT( AND( NOT(NOT(AND( G2, P3)))));
+
+
+C1 := NOT(AND(  (NOT(AND(C0, P0))) , NOT(G0)   ));
+C2 := NOT(AND(  (NOT(AND(OP0, P0A1))) , NOT(G0A1)   ));
+C3 := NOT(AND(  (NOT(AND(C2, P2))) , NOT(G2)   ));
+
+S0 := ODD( OP0, P0);
+S1 := ODD( C1, P1);
+S2 := ODD( C2, P2);
+S3 := ODD( C3, P3);
+
+Z :=  NOT(OR(   NOT(AND(    NOT(OR(C3, S3))   )) ));
+ASSIGN Z;
+
+
+
+
+
+
+
