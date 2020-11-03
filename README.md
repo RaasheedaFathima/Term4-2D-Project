@@ -15,6 +15,6 @@ Mathias Koh Chin An (jsim and circuit design)
 Leong Yun Qin Melody (jsim) 
 Priscilia Pearly tan Pei En (cnf outcome) 
 
-Raash (part 1 java) 
+Azeez Raasheeda Fathima (part 1 java) 
 Leon Tjandra (Part 2 java)
 
