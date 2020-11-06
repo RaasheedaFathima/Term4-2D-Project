@@ -1,5 +1,9 @@
 # Term4-2D-Project
 
+
+## 50004 portion
+Explained in detail under 50.004 2D Report.pdf
+
 ## 50002 portion
 1. test the individual 4 bit adders one by one using the lab2checkoff to obey functional specifications.
 2. combine the 4 bits into 8 units to form the 32 bit adder.
